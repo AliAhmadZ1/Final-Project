@@ -29,7 +29,7 @@ public class WhatsAppService {
                 + "Password: " + password + "\n"
                 + "employee ID: " + employeeId + "\n\n"
                 + "Please keep this information safe.\n\n"
-                + "For support, contact the Mohasil Team.";
+                + "For support, contact the Muhassel Team.";
 
         Message.creator(
                 new PhoneNumber("whatsapp:" + phoneNumber),

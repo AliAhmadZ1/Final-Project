@@ -48,7 +48,7 @@ public class Sales {
 
 
 
-    @Pattern(regexp = "^Confirmed|Refunded$")
+    @Pattern(regexp = "^(Confirmed|DRAFT|Refunded)$")
     private String salesStatus;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

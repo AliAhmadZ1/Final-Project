@@ -195,7 +195,7 @@ public class SalesService {
         }
 
         updateCalculations(saleId);
-        currentSale.setSalesStatus("CONFIRMED");
+        currentSale.setSalesStatus("Confirmed");
         currentSale.setSaleDate(LocalDateTime.now());
         salesRepository.save(currentSale);
 
@@ -203,7 +203,7 @@ public class SalesService {
 
 
 
-    public ItemSale updateProductQuantity(Integer accountantId, Integer saleId, Integer itemId, Integer newQuantity) {
+    public void updateProductQuantity(Integer accountantId, Integer saleId, Integer itemId, Integer newQuantity) {
 
         Accountant accountant = accountantRepository.findAccountantById(accountantId);
         if (accountant == null) {
@@ -236,14 +236,13 @@ public class SalesService {
             throw new ApiException("Insufficient stock for the new quantity");
         }
 
-        itemSale.setQuantity(newQuantity);
+        itemSale.setQuantity(itemSale.getQuantity()+newQuantity);
         itemSale.setTotalPrice(newQuantity * product.getPrice());
          product.setStock(product.getStock() - quantityDifference);
 
          productRepository.save(product);
          itemSaleRepository.save(itemSale);
 
-        return itemSale;
     }
 
 

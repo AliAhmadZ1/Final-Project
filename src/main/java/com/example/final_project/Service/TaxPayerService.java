@@ -49,6 +49,9 @@ public class TaxPayerService {
 
     /// run by admin
     public void activateTP(Integer adminId, Integer taxPayerId) {
+        MyUser admin = myUserRepository.findUserByIdAndRole(adminId,"ADMIN");
+        if (admin==null)
+            throw new ApiException("you don't have permission");
         TaxPayer taxPayer = taxPayerRepository.findTaxBuyerById(taxPayerId);
         if (taxPayer == null) {
             throw new ApiException("Tax Payer is not found");
@@ -142,18 +145,14 @@ public class TaxPayerService {
 
 
     public void addAccountant(Integer taxPayerID, Integer businessId, AccountantDTO accountantDTO) {
-
         TaxPayer taxPayer = taxPayerRepository.findTaxBuyerById(taxPayerID);
         if (taxPayer == null) {
             throw new ApiException("The Taxpayer is not found");
         }
-
-
         Business business1 = businessRepository.findBusinessByIdAndTaxPayer(businessId, taxPayer);
         if (business1 == null) {
             throw new ApiException("Business is not found or does not belong to tax payer");
         }
-
 
         MyUser myUserACC = new MyUser();
         myUserACC.setRole("ACCOUNTANT");
@@ -180,7 +179,7 @@ public class TaxPayerService {
                 "\n" +
                 "Username: \n" + accountant.getMyUser().getUsername() +
                 "\n" +
-                "Password:\n" + accountant.getMyUser().getPassword() +
+                "Password:\n" + accountantDTO.getPassword() +
                 "\n" +
                 "Employee Code:\n" + accountant.getEmployeeId() +
                 "\n" +

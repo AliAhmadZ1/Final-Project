@@ -32,18 +32,16 @@ public class AuditorService {
 
     // authority -> ADMIN
     public List<Auditor> getAllAuditors(Integer id) {
-        MyUser admin = myUserRepository.findUserByIdAndRole(id,"ADMIN");
-        if (admin==null)
+        MyUser admin = myUserRepository.findUserByIdAndRole(id, "ADMIN");
+        if (admin == null)
             throw new ApiException("user not found or doesn't have permission");
         return auditorRepository.findAll();
     }
 
     public void addAuditor(Integer adminId, DTOAuditor dtoAuditor) {
-        MyUser admin = myUserRepository.findUserByIdAndRole(adminId,"ADMIN");
-        if (admin==null)
-
-
-        throw new ApiException("user not found or does have permission");
+        MyUser admin = myUserRepository.findUserByIdAndRole(adminId, "ADMIN");
+        if (admin == null)
+            throw new ApiException("user not found or does have permission");
         MyUser myUser = new MyUser();
         myUser.setName(dtoAuditor.getName());
         myUser.setUsername(dtoAuditor.getUsername());
@@ -61,8 +59,9 @@ public class AuditorService {
 
     public void updateAuditor(Integer auditorId, DTOAuditor dtoAuditor) {
         MyUser myUser = myUserRepository.findUserById(auditorId);
-        if (myUser == null){
-            throw new ApiException("auditor not found");}
+        if (myUser == null) {
+            throw new ApiException("auditor not found");
+        }
         myUser.setName(dtoAuditor.getName());
         myUser.setUsername(dtoAuditor.getUsername());
         myUser.setPassword(dtoAuditor.getPassword());
@@ -83,19 +82,19 @@ public class AuditorService {
 
     // Ali Ahmed Alshehri
     // Endpoint 27
-    public void createTaxReport(Integer auditorId ,Integer businessId){
+    public void createTaxReport(Integer auditorId, Integer businessId) {
         Auditor auditor = auditorRepository.findAuditorsById(auditorId);
-        if (auditor==null)
+        if (auditor == null)
             throw new ApiException("auditor not found");
         Business business = businessRepository.findBusinessById(businessId);
-        if (business==null)
+        if (business == null)
             throw new ApiException("this business not found");
         List<Sales> sales = salesRepository.findSalesByBusinessId(businessId);
         if (sales.isEmpty())
             throw new ApiException("there are no sales for this business");
-        Double totalTax=0.0;
+        Double totalTax = 0.0;
         TaxReports taxReports = new TaxReports();
-        for (Sales s: sales){
+        for (Sales s : sales) {
 //            if (s.getTaxReports()!=null)
 //                throw new ApiException("this invoice tax was paid");
             totalTax += s.getTax_amount();
@@ -114,7 +113,7 @@ public class AuditorService {
 
 
     // Khalid almutiri
-    public void approveTaxReportStatus(Integer taxReportId,Integer auditorId) {
+    public void approveTaxReportStatus(Integer taxReportId, Integer auditorId) {
         TaxReports taxReport = taxReportsRepository.findTaxReportsById(taxReportId);
         if (taxReport == null) {
             throw new ApiException("Tax report not found");
@@ -132,7 +131,7 @@ public class AuditorService {
     }
 
     // Khalid almutiri
-    public void rejectTaxReportStatus(Integer taxReportId,Integer auditorId) {
+    public void rejectTaxReportStatus(Integer taxReportId, Integer auditorId) {
         TaxReports taxReport = taxReportsRepository.findTaxReportsById(taxReportId);
         if (taxReport == null) {
             throw new ApiException("Tax report not found");
@@ -148,7 +147,6 @@ public class AuditorService {
         taxReport.setStatus("Rejected");
         taxReportsRepository.save(taxReport);
     }
-
 
 
     public void activateBusiness(Integer auditId, Integer taxPayerId, Integer businessId) {
@@ -211,7 +209,6 @@ public class AuditorService {
         businessRepository.save(business);
 
     }
-
 
 
     // Khalid almutiri

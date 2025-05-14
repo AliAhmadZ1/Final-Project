@@ -32,7 +32,7 @@ public class ProductController {
     @PostMapping("/add-to-branch/{branchId}")
     public ResponseEntity addProductToBranch(@AuthenticationPrincipal MyUser accountant, @PathVariable Integer branchId, @RequestBody ProductDTO product) {
         productService.addProductToBranch(accountant.getId(), branchId, product);
-        return ResponseEntity.status(200).body("Product added successfully");
+        return ResponseEntity.status(200).body(new ApiResponse("Product added successfully"));
     }
 
 

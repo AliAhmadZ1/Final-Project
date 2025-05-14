@@ -18,8 +18,6 @@ public class Auditor {
     @Id
     private Integer id;
 
-   @Column(columnDefinition = "varchar(40) not null")
-    @NotEmpty
     private String SOCPA;
 
 
@@ -29,11 +27,8 @@ public class Auditor {
     @JoinColumn(name = "id")
     private MyUser myUser;
 
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "auditor")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "auditor")
     private Set<TaxPayer> taxPayers;
-
-
-
 
 
 }
