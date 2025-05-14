@@ -266,7 +266,7 @@ public class SalesService {
 
         }
 
-        if (!currentSale.getSalesStatus().equals("CONFIRMED")) {
+        if (!currentSale.getSalesStatus().equals("Confirmed")) {
             throw new ApiException("Cannot print not confirmed invoice");
         }
 
@@ -349,7 +349,7 @@ public class SalesService {
 
             document.add(new Paragraph("Thank you for shopping with us!"));
             document.add(Chunk.NEWLINE);
-            document.add(new Paragraph("Mohasil Team", new Font(Font.FontFamily.HELVETICA, 10, Font.ITALIC)));
+            document.add(new Paragraph("Muhassel Team", new Font(Font.FontFamily.HELVETICA, 10, Font.ITALIC)));
 
             document.close();
 
