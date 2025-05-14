@@ -126,7 +126,6 @@ public class SalesService {
         itemSale.setUnitPrice(product.getPrice());
         itemSale.setTotalPrice(product.getPrice()* item.getQuantity());
 
-        product.setStock(product.getStock()-item.getQuantity());
         productRepository.save(product);
         itemSaleRepository.save(itemSale);
 
@@ -145,6 +144,7 @@ public class SalesService {
 
         /// sub total before tax
         double subTotal=0.0;
+
         for(ItemSale i:items){
             subTotal+= i.getTotalPrice();
         }
@@ -188,13 +188,16 @@ public class SalesService {
         }
 
 
+        for(ItemSale i : items){
+         Product p = i.getProduct();
+            p.setStock(p.getStock()-i.getQuantity());
+            productRepository.save(p);
+        }
+
         updateCalculations(saleId);
         currentSale.setSalesStatus("CONFIRMED");
         currentSale.setSaleDate(LocalDateTime.now());
         salesRepository.save(currentSale);
-
-
-
 
     }
 
@@ -262,6 +265,10 @@ public class SalesService {
         if (currentSale.getCounterBox().getAccountant().getId() != accountantId) {
             throw new ApiException("the counter box with this sale does not belong to this accountant ");
 
+        }
+
+        if (!currentSale.getSalesStatus().equals("CONFIRMED")) {
+            throw new ApiException("Cannot print not confirmed invoice");
         }
 
 
@@ -346,7 +353,6 @@ public class SalesService {
             document.add(new Paragraph("Mohasil Team", new Font(Font.FontFamily.HELVETICA, 10, Font.ITALIC)));
 
             document.close();
-
 
             return baos.toByteArray();
 
