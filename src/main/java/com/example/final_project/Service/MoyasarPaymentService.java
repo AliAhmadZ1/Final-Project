@@ -38,6 +38,7 @@ public class MoyasarPaymentService {
         this.taxReportsRepository = taxReportsRepository;
     }
 
+    // Ali Ahmed Alshehri
     public ResponseEntity<?> processPayment(Integer taxReportId, MoyasarPayment moyasarPayment) throws IOException {
         TaxReports taxReports = taxReportsRepository.findById(taxReportId)
                 .orElseThrow(() -> new ApiException("Tax Report not found"));
@@ -81,6 +82,7 @@ public class MoyasarPaymentService {
         return ResponseEntity.status(response.getStatusCode()).body(transactionUrl);
     }
 
+    // Ali Ahmed Alshehri
     public TaxReports callback(String paymentId) throws IOException {
         HttpHeaders headers = new HttpHeaders();
         headers.setBasicAuth(apiKey, "");
