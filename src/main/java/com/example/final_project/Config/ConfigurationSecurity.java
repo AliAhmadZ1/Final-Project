@@ -39,7 +39,7 @@ public class ConfigurationSecurity {
                 .authenticationProvider(daoAuthenticationProvider())
                 .authorizeHttpRequests()
                 .requestMatchers(
-                        "/api/v1/tax-payer/tax-payer-register")
+                        "/api/v1/tax-payer/tax-payer-register","/api/v1/moyasar-payment/pay-tax/tax-report/{{taxReportId}}","/api/v1/moyasar-payment/callback")
                 .permitAll()
                 .requestMatchers("/api/v1/user/update")
                 .hasAnyAuthority("ADMIN","AUDITOR","TAXPAYER","ACCOUNTANT")
@@ -48,7 +48,7 @@ public class ConfigurationSecurity {
                         "/api/v1/branch/add/",
                         "/api/v1/tax-payer/add-accountant/",
                         "/api/v1/accountant/assign-accountant-to-branch/",
-                        "/api/v1/moyasar-payment/pay-tax/tax-report",
+//                        "/api/v1/moyasar-payment/pay-tax/tax-report",
                         "/api/v1/tax-payer/tax-payer-register",
                         "/api/v1/tax-payer/update",
                         "/api/v1/tax-payer/delete",
@@ -89,7 +89,8 @@ public class ConfigurationSecurity {
                               "/api/v1/product/get" +
                               "/api/v1/product/update",
                              "/api/v1/product/delete",
-                            "/api/v1/product/barcode")  // 20
+                            "/api/v1/product/barcode",
+                        "/api/v1/sales/refund-sale/{{saleId}}")  // 21
                 .hasAuthority("ACCOUNTANT")
                 .requestMatchers(
                         "/api/v1/taxReports/add",

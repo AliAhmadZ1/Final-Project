@@ -58,7 +58,7 @@ public class MoyasarPaymentService {
         params.add("amount", stAmount);
         params.add("currency", "SAR");
         params.add("description", moyasarPayment.getDescription());
-        params.add("callback_url", "http://localhost:5000/api/v1/moyasar-payment/callback?taxReportId=" + taxReportId);
+        params.add("callback_url", "http://aa.com/callback");
         params.add("source[type]", "card"); // يمكن تغيير النوع هنا
         params.add("source[name]", moyasarPayment.getName());
         params.add("source[number]", moyasarPayment.getNumber());

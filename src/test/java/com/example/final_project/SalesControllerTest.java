@@ -38,7 +38,7 @@ public class SalesControllerTest {
 
     @BeforeEach
     void setUp() {
-        productDTO = new ProductDTO("Nova water", 2, 5,"3456184658");
+        productDTO = new ProductDTO("Nova water", 2.0, 5,"3456184658");
     }
 
     @Test
