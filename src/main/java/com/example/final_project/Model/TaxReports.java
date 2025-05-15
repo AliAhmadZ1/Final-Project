@@ -45,7 +45,7 @@ public class TaxReports {
 
 
     @NotEmpty(message = "satatus of tax report must be not empty")
-    @Pattern(regexp = "Pending|Approved|Paid|Under Legal Action|Rejected")
+    @Pattern(regexp = "Pending|Approved|Paid|Unpaid|Under Legal Action|Rejected")
     private String status;
 
 

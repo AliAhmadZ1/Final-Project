@@ -14,7 +14,6 @@ public class MoyasarPayment {
         private String cvc;
         private String month;
         private String year;
-        private int amount;
         private String description;
         private String postalCode;
         private String country;

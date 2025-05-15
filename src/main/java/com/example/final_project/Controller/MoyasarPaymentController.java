@@ -45,8 +45,8 @@ public class MoyasarPaymentController {
         }
 
         try {
-            moyasarPaymentService.callback(paymentId); // استدعاء callback
-            return ResponseEntity.ok("Tax Report successfully paid or rejected");
+            moyasarPaymentService.callback(paymentId,taxReportIdStr); // استدعاء callback
+            return ResponseEntity.ok("Tax Report payment process done!");
         } catch (Exception e) {
             return ResponseEntity.status(400).body(new ApiResponse("Payment failed: " + e.getMessage()));
         }

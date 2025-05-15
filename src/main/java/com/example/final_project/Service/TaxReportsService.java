@@ -214,7 +214,7 @@ public class TaxReportsService {
                 "\n" +
                 "Sincerely,";
         notificationService.sendEmail(emailTo,"Due to VAT Non-Payment\n" +
-                "\n"," ");
+                "\n",message);
     }
 
 

@@ -89,7 +89,8 @@ public class ConfigurationSecurity {
                               "/api/v1/product/get" +
                               "/api/v1/product/update",
                              "/api/v1/product/delete",
-                            "/api/v1/product/barcode")  // 20
+                            "/api/v1/product/barcode",
+                        "/api/v1/sales/refund-sale/{{saleId}}")  // 20
                 .hasAuthority("ACCOUNTANT")
                 .requestMatchers(
                         "/api/v1/taxReports/add",

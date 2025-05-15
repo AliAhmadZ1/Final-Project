@@ -1,6 +1,6 @@
 package com.example.final_project.Controller;
 
-import com.example.final_project.Api.ApiException;
+import com.example.final_project.Api.ApiResponse;
 import com.example.final_project.Model.MyUser;
 import com.example.final_project.Model.TaxReports;
 import com.example.final_project.Service.TaxReportsService;
@@ -32,21 +32,21 @@ public class TaxReportsController {
     @PostMapping("/add/{business_id}")
     public ResponseEntity addTaxReports(@AuthenticationPrincipal MyUser myUser, @PathVariable Integer business_id, @Valid @RequestBody TaxReports taxReports){
         taxReportsService.addTaxReports(myUser.getId(), business_id, taxReports);
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiException("Tax Reports is added!"));
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Tax Reports is added!"));
     }
 
     // authority -> Auditor
     @PutMapping("/update/{id}")
     public ResponseEntity updateTaxReports(@AuthenticationPrincipal MyUser myUser, @PathVariable Integer id, @Valid @RequestBody TaxReports taxReports){
         taxReportsService.updateTaxReports(myUser.getId(),id, taxReports);
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiException("Tax Reports is updated"));
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Tax Reports is updated"));
     }
 
     // authority -> Admin
     @DeleteMapping("delete/{id}")
     public ResponseEntity deleteTaxReports(@AuthenticationPrincipal MyUser myUser, @PathVariable Integer id){
         taxReportsService.deleteTaxReports(myUser.getId(),id);
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiException("Tax Reports is deleted"));
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Tax Reports is deleted"));
     }
 
     //فرض غرامة تاخير سداد بعدها بشهر
@@ -54,7 +54,7 @@ public class TaxReportsController {
     @PutMapping("/apply-penalty/{taxReportId}")
     public ResponseEntity applyLatePaymentPenalty(@AuthenticationPrincipal MyUser myUser, @PathVariable Integer taxReportId) {
         taxReportsService.applyLatePaymentPenalty(myUser.getId(),taxReportId);
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiException("Late payment penalty applied if applicable"));
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Late payment penalty applied if applicable"));
     }
 
     //فرض غرامة تاخير سداد بعدها بشهرين
@@ -62,7 +62,7 @@ public class TaxReportsController {
     @PutMapping("/apply-2month-penalty/{taxReportId}")
     public ResponseEntity applyTwoMonthLatePenalty(@AuthenticationPrincipal MyUser myUser, @PathVariable Integer taxReportId) {
         taxReportsService.applyTwoMonthLatePenalty(myUser.getId(),taxReportId);
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiException("10% penalty applied for 2-month late payment"));
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("10% penalty applied for 2-month late payment"));
     }
 
     //في حال تجاوز 90 يوم يتم اتخاذ الإجراءات القانونية
@@ -70,7 +70,7 @@ public class TaxReportsController {
     @PutMapping("/apply-legal-action/{taxReportId}")
     public ResponseEntity applyLegalAction(@AuthenticationPrincipal MyUser myUser, @PathVariable Integer taxReportId) {
         taxReportsService.applyLegalActionForTaxEvasion(myUser.getId(),taxReportId);
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiException("Legal action applied for tax evasion"));
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Legal action applied for tax evasion"));
     }
 
 
@@ -109,7 +109,7 @@ public class TaxReportsController {
     @PutMapping("/bulk-approve/{auditorId}")
     public ResponseEntity bulkApproveReports(@AuthenticationPrincipal MyUser myUser, @RequestBody List<Integer> reportIds) {
         taxReportsService.bulkApproveReports(myUser.getId(), reportIds);
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiException("Reports approved successfully"));
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Reports approved successfully"));
     }
 
     // 7. Get latest report reviewed by auditor

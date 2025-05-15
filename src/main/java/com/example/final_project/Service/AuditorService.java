@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +30,7 @@ public class AuditorService {
     private final SalesRepository salesRepository;
     private final TaxReportsRepository taxReportsRepository;
     private final TaxPayerRepository taxPayerRepository;
+    private final BranchRepository branchRepository;
 
     // authority -> ADMIN
     public List<Auditor> getAllAuditors(Integer id) {
@@ -82,33 +84,42 @@ public class AuditorService {
 
     // Ali Ahmed Alshehri
     // Endpoint 27
-    public void createTaxReport(Integer auditorId, Integer businessId) {
+    public void createTaxReport(Integer auditorId, Integer branchId) {
         Auditor auditor = auditorRepository.findAuditorsById(auditorId);
         if (auditor == null)
             throw new ApiException("auditor not found");
-        Business business = businessRepository.findBusinessById(businessId);
-        if (business == null)
+        Branch branch = branchRepository.findBranchById(branchId);
+        if (branch == null)
             throw new ApiException("this business not found");
-        List<Sales> sales = salesRepository.findSalesByBusinessId(businessId);
+        Set<Sales> sales = salesRepository.findSalesByBranchId(branchId);
         if (sales.isEmpty())
             throw new ApiException("there are no sales for this business");
         Double totalTax = 0.0;
         TaxReports taxReports = new TaxReports();
         for (Sales s : sales) {
-//            if (s.getTaxReports()!=null)
-//                throw new ApiException("this invoice tax was paid");
+            if (s.getTaxReports()!=null)
+                continue;
             totalTax += s.getTax_amount();
-            s.setTaxReports(taxReports);
+//            s.setTaxReports(taxReports);
         }
         taxReports.setStart_date(LocalDateTime.now().minusDays(90));
-        taxReports.setBusiness(business);
+        taxReports.setBusiness(branch.getBusiness());
         taxReports.setTotalTax(totalTax);
         taxReports.setEnd_date(LocalDateTime.now());
         taxReports.setStatus("Pending");
+        taxReports.setSales(sales);
+        taxReports.setAuditor(auditor);
 
-        businessRepository.save(business);
+        branchRepository.save(branch);
         salesRepository.saveAll(sales);
         taxReportsRepository.save(taxReports);
+
+        for (Sales s : sales) {
+            s.setTaxReports(taxReports);
+        }
+        salesRepository.saveAll(sales);
+        taxReportsRepository.save(taxReports);
+
     }
 
 

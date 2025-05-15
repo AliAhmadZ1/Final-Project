@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface SalesRepository extends JpaRepository<Sales,Integer> {
@@ -28,8 +29,8 @@ public interface SalesRepository extends JpaRepository<Sales,Integer> {
 //    @Query("select s from Sales s where s.invoiceDate")
 //    List<Sales> findSalesByDateThreeMonthsBefore();
 
-    @Query("select s from Sales s where s.branch.business.id=?1 and s.saleDate> now()- 90 day")
-    List<Sales> findSalesByBusinessId(Integer businessId);
+    @Query("select s from Sales s where s.branch.id=?1 and s.saleDate> now()- 90 day")
+    Set<Sales> findSalesByBranchId(Integer branchId);
 
     @Query("SELECT SUM(s.grand_amount) FROM Sales s")
     Double getTotalGrandAmount();

@@ -5,6 +5,7 @@ import com.example.final_project.Model.MoyasarPayment;
 import com.example.final_project.Model.Payment;
 import com.example.final_project.Model.TaxPayer;
 import com.example.final_project.Model.TaxReports;
+import com.example.final_project.Repository.PaymentRepository;
 import com.example.final_project.Repository.TaxPayerRepository;
 import com.example.final_project.Repository.TaxReportsRepository;
 import com.fasterxml.jackson.core.JsonParser;
@@ -24,30 +25,33 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 public class MoyasarPaymentService {
 
     private final TaxReportsRepository taxReportsRepository;
+    private final PaymentRepository paymentRepository;
 
     @Value("${moyasar.api.key}")
     private String apiKey;
 
     private static final String MOYASAR_API_URL = "https://api.moyasar.com/v1/payments/";
 
-    public MoyasarPaymentService(TaxReportsRepository taxReportsRepository) {
-        this.taxReportsRepository = taxReportsRepository;
-    }
 
     // Ali Ahmed Alshehri
     public ResponseEntity<?> processPayment(Integer taxReportId, MoyasarPayment moyasarPayment) throws IOException {
-        TaxReports taxReports = taxReportsRepository.findById(taxReportId)
-                .orElseThrow(() -> new ApiException("Tax Report not found"));
+//        TaxReports taxReports = taxReportsRepository.findById(taxReportId)
+//                .orElseThrow(() -> new ApiException("Tax Report not found"));
+
+        TaxReports taxReports = taxReportsRepository.findTaxReportsById(taxReportId);
+        if(taxReports==null)
+            throw new ApiException("Tax Report not found");
 
         if ("Paid".equalsIgnoreCase(taxReports.getStatus())) {
             throw new ApiException("This TaxReport is already paid");
         }
 
-        int amount = moyasarPayment.getAmount(); // amount already provided in the `MoyasarPayment`
+        double amountInt = taxReports.getTotalTax()*100;
+        int amount = (int) amountInt;
         String stAmount = String.valueOf(amount);
 
         RestTemplate restTemplate = new RestTemplate();
@@ -70,20 +74,11 @@ public class MoyasarPaymentService {
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
         ResponseEntity<String> response = restTemplate.postForEntity(MOYASAR_API_URL, request, String.class);
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode json = mapper.readTree(response.getBody());
-
-        String paymentId = json.get("id").asText();
-        String transactionUrl = json.get("transaction_url").asText();
-
-        taxReports.setStatus("Pending");
-        taxReportsRepository.save(taxReports);
-
-        return ResponseEntity.status(response.getStatusCode()).body(transactionUrl);
+        return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
     }
 
     // Ali Ahmed Alshehri
-    public TaxReports callback(String paymentId) throws IOException {
+    public void callback(String paymentId,String taxReportId) throws IOException {
         HttpHeaders headers = new HttpHeaders();
         headers.setBasicAuth(apiKey, "");
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -92,30 +87,44 @@ public class MoyasarPaymentService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.exchange(MOYASAR_API_URL + paymentId, HttpMethod.GET, entity, String.class);
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode json = mapper.readTree(response.getBody());
-
-        String status = json.get("status").asText();
-        String taxReportIdStr = json.get("metadata") != null && json.get("metadata").has("taxReportId")
-                ? json.get("metadata").get("taxReportId").asText()
-                : null;
-
-        if (taxReportIdStr == null) {
-            throw new ApiException("Metadata is missing taxReportId");
+        int id = Integer.parseInt(taxReportId);
+        TaxReports taxReports = taxReportsRepository.findTaxReportsById(id);
+        Payment payment = new Payment();
+        if (getPaymentStatus(paymentId).equalsIgnoreCase("Paid")) {
+            taxReports.setStatus("Paid");
+            payment.setStatus("Paid");
+        }else {
+            payment.setStatus("Unpaid");
         }
 
-        Integer taxReportId = Integer.parseInt(taxReportIdStr);
-        TaxReports taxReport = taxReportsRepository.findById(taxReportId)
-                .orElseThrow(() -> new ApiException("Tax Report not found"));
+        payment.setPaymentId(paymentId);
+        payment.setPaymentDate(LocalDateTime.now());
+        payment.setName(taxReports.getBusiness().getTaxPayer().getMyUser().getName());
+        payment.setTaxReports(taxReports);
+        payment.setTaxPayer(taxReports.getBusiness().getTaxPayer());
 
-        if ("paid".equalsIgnoreCase(status)) {
-            taxReport.setStatus("Paid");
-            taxReport.setPaymentDate(LocalDate.now());
-        } else {
-            taxReport.setStatus("Rejected");
-        }
+        paymentRepository.save(payment);
+        taxReportsRepository.save(taxReports);
 
-        taxReportsRepository.save(taxReport);
-        return taxReport;
     }
+
+    public String getPaymentStatus(String payment_id){
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBasicAuth(apiKey,"");
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.exchange(MOYASAR_API_URL + payment_id,
+                HttpMethod.GET,entity, String.class);
+        String resp = response.getBody().toString();
+        if (response.getBody().contains("paid"))
+            return "Paid";
+        else
+            return "Unpaid";
+    }
+
+
 }

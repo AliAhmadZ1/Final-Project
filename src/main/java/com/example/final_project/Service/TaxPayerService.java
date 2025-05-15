@@ -12,11 +12,11 @@ import com.example.final_project.Model.*;
 import com.example.final_project.Notification.NotificationService;
 import com.example.final_project.Repository.*;
 import lombok.RequiredArgsConstructor;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.jdbc.support.JdbcAccessor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.util.*;
@@ -41,10 +41,10 @@ public class TaxPayerService {
     private final JdbcAccessor jdbcAccessor;
 
 
-    //    private final WhatsAppService whatsAppService;
     private final CounterBoxRepository counterBoxRepository;
     private final BranchRepository branchRepository;
-    //  private final WhatsAppService whatsAppService;
+//    private final WhatsAp-delete-pService whatsAppService;
+    //  private final WhatsAp-delete-pService whatsAppService;
 
 
     /// run by admin
@@ -198,13 +198,13 @@ public class TaxPayerService {
         }
         String fullPhoneNumber = "966" + phone;
 
-        /*whatsAppService.sendAccountantActivationMessage(
-                accountant.getUser().getUsername(),
-                accountant.getUser().getPassword(),
-                accountant.getEmployeeId(),
-                fullPhoneNumber,
-                LocalDate.now()
-        );*/
+//        whatsAppService.sendAccountantActivationMessage(
+//                accountantDTO.getUsername(),
+//                accountantDTO.getPassword(),
+//                accountantDTO.getEmployeeId(),
+//                fullPhoneNumber,
+//                LocalDate.now()
+//        );
 
 
         notificationService.sendEmail(accountant.getMyUser().getEmail(), subject, message);
